@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+	<record id="hr_payslip_run_form_inherit" model="ir.ui.view">
+	    <field name="name">hr.payslip.run.form.inherit</field>
+	    <field name="model">hr.payslip.run</field>
+	    <field name="inherit_id" ref="om_hr_payroll.hr_payslip_run_form"/>
+	    <field name="arch" type="xml">
+		    <xpath expr="//button[@name='%(om_hr_payroll.action_hr_payslip_by_employees)d']" position="after">
+		    	<button name="action_send_payslips" type="object" string="Send Payslips" class="oe_highlight"/>
+		    </xpath>
+	    </field>
+	</record>
+
+    
+</odoo>
