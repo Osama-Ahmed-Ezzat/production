@@ -9,8 +9,9 @@
             <field name="arch" type="xml">
 
                 <xpath expr="//button[@name='button_draft']" position="after">
-<!--                    <field name="is_check"/>-->
-                    <button name="compute_analytic_account" type="object" class="oe_stat_button" icon="fa-check-square" string="Check.O.K">
+                    <field name="is_check"/>
+                    <button name="compute_analytic_account" type="object" class="oe_stat_button"
+                            icon="fa-check-square" string="Check.A.C">
                         <field name="is_check" widget="boolean_button" options='{"terminology": {
         "string_true": "Blacklist",
         "hover_true": "Blacklist",

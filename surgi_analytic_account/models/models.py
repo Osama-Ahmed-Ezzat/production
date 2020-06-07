@@ -5,13 +5,13 @@ class AccountAnalyticAccount(models.Model):
 
     user_id = fields.Many2one(comodel_name="res.users", string="Salesperson",)
     salesteam_id = fields.Many2one(comodel_name="crm.team", string="Sales Team",)
-    product_id = fields.Many2one(comodel_name="product.product", string="Product Line",)
+    product_id = fields.Many2one(comodel_name="product.lines", string="Product Line",)
 
 
 class ProductProduct(models.Model):
     _inherit = 'product.product'
 
-    product_id = fields.Many2one(comodel_name="product.product", string="Product Line",)
+    product_id = fields.Many2one(comodel_name="product.lines", string="Product Line",)
 
 class AccountMove(models.Model):
     _inherit = 'account.move'
@@ -32,11 +32,13 @@ class AccountMove(models.Model):
                         print("33333333333333333333333333333")
                         line.analytic_account_id=rec.id
                         self.is_check=True
-                    else:
+
+                    elif line.product_id.product_id==rec.product_id:
                         line.analytic_account_id =False
                         self.is_check = False
             else:
                 line.analytic_account_id = False
+                self.is_check = False
 
 
 
