@@ -1,0 +1,22 @@
+<odoo>
+    <data>
+
+
+        <!-- Inherit Form View to Modify it -->
+        <record id="analytic_product_normal_form_view" model="ir.ui.view">
+            <field name="name">analytic_product_normal_product</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="product.product_normal_form_view"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//field[@name='barcode']" position="after">
+                    <field name="product_id"/>
+                </xpath>
+
+            </field>
+        </record>
+
+
+
+    </data>
+</odoo>
