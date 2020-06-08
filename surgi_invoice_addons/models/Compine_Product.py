@@ -146,7 +146,7 @@ class account_move(models.Model):
                                 }
 
                     pass
-                res = sorted(compions.items(), key=lambda x: x[1]['priority']) #order compinations
+                res = sorted(compions.items(), key=lambda x: x[1]['priority'], reverse=True) #order compinations
                 products2 = products.copy() # make copy of products
                 for comp in res:
                     accepted = True
