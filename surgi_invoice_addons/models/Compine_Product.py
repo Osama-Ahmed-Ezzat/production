@@ -2,7 +2,7 @@ from collections import OrderedDict
 from pprint import pprint
 
 from odoo import api, fields, models
-
+from operator import getitem
 
 class product_compination_template_group_surgi(models.Model):
     _name = 'product.compination.groups.surgi'
@@ -109,37 +109,39 @@ class account_move(models.Model):
                     pass#end for line in invoicelines
                 tempcompinations = self.env['product.compination.groups.surgi'].search([('product_group', 'in', groups)])  # check which compination is exist in the products
 
-                compinations = {}
+                compinations = []
                 for com in tempcompinations.product_compination_id:
-                    compinations[com.id]={'id':com.id,
+                    compinations.append({'id':com.id,
                                           'priority' : com.priority,
                                           'name':com.name,
                                           'mainproduct':com.main_product
 
-                                          }
+                                          })
 
                     pass
-                sorted(compinations.items(), key=lambda x: x[1]['priority'])
+                #xcomp=sorted(compinations.items(), key=lambda x: compinations['priority'],reverse=True)
+                res=compinations.copy()
+                compinations.sort(key=lambda x: x['priority'],reverse=True)
                 compions = {}
                 for v in compinations:
                     self._cr.execute(
-                        "select product_group,product_quantity,product_compination_id from product_compination_groups_surgi where product_compination_id=%d" % v)
+                        "select product_group,product_quantity,product_compination_id from product_compination_groups_surgi where product_compination_id=%d" % v['id'])
                     current = self._cr.fetchall()
                     co = {}
                     for c in current:
                         co[c[0]] = {'product_group':c[0],'product_quantity':c[1],'product_compination_id':c[2]}
 
                     if co.keys() <= products.keys():
-                        compions[v] = {
-                            'id': v,
-                            'name': compinations[v]['name'],
-                            'priority': compinations[v]['priority'],
-                            'mainproduct': compinations[v]['mainproduct'].name,
+                        compions[v['id']] = {
+                            'id': v['id'],
+                            'name': v['name'],
+                            'priority': v['priority'],
+                            'mainproduct': v['mainproduct'].name,
                             'groups': {},
                             'q':0
                         }
                         for x in co:
-                            compions[v]['groups'].update({
+                            compions[v['id']]['groups'].update({
                                 co[x]['product_group']: {
                                     'group': co[x]['product_group'],
                                     'quantity': co[x]['product_quantity'],
