@@ -119,7 +119,7 @@ class account_move(models.Model):
                                           }
 
                     pass
-                sorted(compinations.items(), key=lambda x: x[1]['priority'],reverse=True)
+                sorted(compinations.items(), key=lambda x: x[1]['priority'])
                 compions = {}
                 for v in compinations:
                     self._cr.execute(
