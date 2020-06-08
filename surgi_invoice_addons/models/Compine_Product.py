@@ -77,9 +77,132 @@ class account_move(models.Model):
     cominations_id = fields.One2many("product.compination.movement.surgi", string="Compinations",
                                      inverse_name="compination_move")
     items_move_id = fields.One2many('product.item.movement.surgi', string="Products", inverse_name="move_id")
-
-    # @api.onchange('invoice_line_ids')
     def changed_line_ids(self):
+        products = {}  # will hold products and there quantities
+        groups = []  # will hold groups found in those products
+        for rec in self:
+            moveid = rec.ids[0]  # the current move id
+            if rec.invoice_line_ids:
+                #here there will be all the code
+                for line in rec.invoice_line_ids:
+                    if line.pro_group != '' and line.pro_group != 'unknown':#check if the product have group
+                        if line.pro_group in products.keys():
+                            products[line.pro_group]['totalq'] += line.quantity
+                        else:
+                            groups.append(line.pro_group)
+                            products[line.pro_group] = {
+                                'totalq': line.quantity,
+                                'products': line.product_id.id,
+                                'pro_name':line.product_id.name
+                            }
+                    else: # in not have group
+                        if line.product_id.name in products.keys():
+                            products[line.product_id.name]['totalq'] += line.quantity
+                        else:
+                            groups.append(line.product_id.name)
+                            products[line.product_id.name] = {
+                                'totalq': line.quantity,
+                                'products': line.product_id.id,
+                                'pro_name': line.product_id.name
+                            }
+
+                    pass#end for line in invoicelines
+                tempcompinations = self.env['product.compination.groups.surgi'].search([('product_group', 'in', groups)])  # check which compination is exist in the products
+
+                compinations = {}
+                for com in tempcompinations.product_compination_id:
+                    compinations[com.id]={'id':com.id,
+                                          'priority' : com.priority,
+                                          'name':com.name,
+                                          'mainproduct':com.main_product
+
+                                          }
+
+                    pass
+                sorted(compinations.items(), key=lambda x: x[1]['priority'],reverse=True)
+                compions = {}
+                for v in compinations:
+                    self._cr.execute(
+                        "select product_group,product_quantity,product_compination_id from product_compination_groups_surgi where product_compination_id=%d" % v)
+                    current = self._cr.fetchall()
+                    co = {}
+                    for c in current:
+                        co[c[0]] = {'product_group':c[0],'product_quantity':c[1],'product_compination_id':c[2]}
+
+                    if co.keys() <= products.keys():
+                        compions[v] = {
+                            'id': v,
+                            'name': compinations[v]['name'],
+                            'priority': compinations[v]['priority'],
+                            'mainproduct': compinations[v]['mainproduct'].name,
+                            'groups': {},
+                            'q':0
+                        }
+                        for x in co:
+                            compions[v]['groups'].update({
+                                co[x]['product_group']: {
+                                    'group': co[x]['product_group'],
+                                    'quantity': co[x]['product_quantity'],
+                                }})
+                            pass
+
+
+
+                    else:
+                        x="not Exist"
+                    pass
+                pass
+
+                for comp in compions:
+                    accepted = True
+                    itemsno = -1
+                    for k in compions[comp]['groups']:
+                        if k != False:
+                            if products[k]['totalq'] < compions[comp]['groups'][k]['quantity']:
+                                accepted = False
+                                break
+                            else:
+                                cx = int(products[k]['totalq'] / compions[comp]['groups'][k]['quantity'])
+                                if itemsno == -1 or itemsno > cx:
+                                    itemsno = cx
+
+                    if accepted:
+                        for k in compions[comp]['groups']:
+                            q1 = compions[comp]['groups'][k]['quantity'] * itemsno
+                            products[k]['totalq'] -= q1
+                            pass
+                        compions[comp]['q'] = itemsno
+
+                compions
+                self._cr.execute("delete from product_compination_movement_surgi where compination_move =%d" % moveid)
+                for r in compions:
+                    if compions[r]['q'] > 0:
+                        self.env["product.compination.movement.surgi"].create(
+                            {
+                                'compunation_count': compions[r]['q'],
+                                'compunation_name': compions[r]['name'],
+                                'compination_move': moveid,
+                                'compination_main_product': compions[r]['mainproduct']
+                            }
+                        )
+
+                self._cr.execute("delete from product_item_movement_surgi where move_id =%d" % moveid)
+                for p in products:
+                    if products[p]['totalq'] > 0:
+                        print(p)
+                        self._cr.execute(
+                            'insert into product_item_movement_surgi  (product_count,move_id,product_name) values (%d,%d,%s)  ' % (
+                                products[p]['totalq'], moveid, "'" + str(products[p]['pro_name']) + "'"))
+
+
+
+
+
+
+            pass
+        pass
+    # @api.onchange('invoice_line_ids')
+    def changed_line_ids1(self):
         products = {} # will hold products and there quantities
         groups = [] # will hold groups found in those products
         for rec in self:
@@ -146,8 +269,11 @@ class account_move(models.Model):
                                 }
 
                     pass
-                res = sorted(compions.items(), key=lambda x: x[1]['priority'], reverse=True) #order compinations
+                res = sorted(compions.items(), key=lambda x: x[1]['priority']) #order compinations
                 products2 = products.copy() # make copy of products
+
+
+
                 for comp in res:
                     accepted = True
                     itemsno = -1
