@@ -11,7 +11,10 @@ class department_fields(models.Model):
 
     department_type = fields.Selection([('department', 'Main Department'), ('section', 'Section')], string='Type',
                                        translate=True)
+class employee_fields(models.Model):
+    _inherit = 'hr.employee.public'
 
+    labor_linc_no = fields.Char(string="Labor Linc No.")
 
 class employee_fields(models.Model):
     _inherit = 'hr.employee'
