@@ -35,8 +35,8 @@
                 <xpath expr="//form[1]/sheet[1]/group[1]" position="after">
                     <group name="surgi_group_ZgqwO">
                         <group name="surgi_group_ZgqwO_left">
-                            <field name="check_number" required="True"/>
-                            <field name="date_due" required="True"/>
+                            <field name="check_number"/>
+                            <field name="date_due"/>
                             <field name="collection_receipt_number"/>
                         </group>
                     <group name="surgi_group_ZgqwO_right">
