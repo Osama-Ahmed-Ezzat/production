@@ -1,7 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_user_product_compination_surgi,user product compination surgi,model_product_compination_surgi,base.group_user,1,1,1,1
-access_product_compination_template_group_surgi,product compination template group surgi,model_product_compination_groups_surgi,base.group_user,1,1,1,1
-access_product_compination_account_move_surgi,product compination account move surgi,model_product_compination_movement_surgi,base.group_user,1,1,1,1
-access_product_items_move_surgi,product items move surgi,model_product_item_movement_surgi,base.group_user,1,1,1,1
-access_account_move,account move,model_account_move,base.group_user,1,1,1,1
-acess_account_move_line,account move line,model_account_move_line,base.group_user,1,1,1,1
