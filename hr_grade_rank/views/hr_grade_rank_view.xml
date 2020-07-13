@@ -42,7 +42,7 @@
 
     <!-- GRADE ACTION -->
     <record id="action_employee_grade" model="ir.actions.act_window">
-        <field name="name">Employee Grades</field>
+        <field name="name">Employee Grades Nassar</field>
         <field name="res_model">grade.grade</field>
         <field name="view_mode">tree,form</field>
     </record>
