@@ -6,7 +6,7 @@
         <field name="name">grade.grade.form</field>
         <field name="model">grade.grade</field>
         <field name="arch" type="xml">
-            <form string="Employees Grade">
+            <form string="Employees Grade Nassar">
                 <sheet>
                     <group>
                         <field name="name" required="1"/>
